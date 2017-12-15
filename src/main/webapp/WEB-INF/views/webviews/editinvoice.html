@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>H+ 后台主题UI框架 - 数据表格</title>
+<meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+<meta name="description"
+	content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+<link href="/css/animate.css" rel="stylesheet">
+<link href="/css/style.css?v=4.1.0" rel="stylesheet">
+<link rel="stylesheet" href="/css/pager.css" />
+<link href="/css/mag.css" rel="stylesheet">
+<link href="/css/default.css" rel="stylesheet">
+<link href="/css/index.css" rel="stylesheet">
+<style type="text/css">
+#bg {
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 1001;
+	-moz-opacity: 0.7;
+	opacity: .70;
+	filter: alpha(opacity = 70);
+}
+</style>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>护照</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="carousel.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="carousel.html#">选项1</a>
+                                </li>
+                                <li><a href="carousel.html#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row mag-eg-row" style="height:100%">
+							<div class="mag-eg-el-wrap img-thumbnail" style="height:100%">
+						  		<div class="proportion" style="height:100%">
+									<div mag-thumb="drag" class="mag-eg-el">
+							  			<img id="filePath"/>
+									</div>
+									<div class="filler"></div>
+						  		</div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-7">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>编辑发票信息</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="carousel.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="carousel.html#">选项1</a>
+                                </li>
+                                <li><a href="carousel.html#">选项2</a>
+                                </li>
+                            </ul>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content ">
+                        <div class="form-horizontal m-t" id="commentForm">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">公司名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="company" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">供应方名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="supplier_name" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">供应方税号：</label>
+                                <div class="col-sm-8">
+                                    <input id="identify_code" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">发票类型：</label>
+                                <div class="col-sm-8">
+                                    <input id="classification" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">金额：</label>
+                                <div class="col-sm-8">
+                                    <input id="amount" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">税额：</label>
+                                <div class="col-sm-8">
+                                    <input id="tax" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">摘要：</label>
+                                <div class="col-sm-8">
+                                    <input id="type" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <p class="btn-l" style="text-align:center">
+									<input id="fa" type="checkbox">
+										固定资产
+									<input id="invalid" type="checkbox" style="margin-left:30px">
+									无法识别
+								</p>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-3">
+                                    <button class="btn btn-primary" type="submit">提交</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+	<!-- <div id="bg" style="text-align: center; vertical-align: center;">
+		<div style="z-index: 1050; margin-top: 15%">
+			<img src="/images/loading.gif" style="width: 20px; height: 20px;">
+			<p style="color: white">正在刷新....</p>
+		</div>
+	</div> -->
+	<!-- 全局js -->
+	<script src="/js/jquery.min.js?v=2.1.4"></script>
+	<script src="/js/bootstrap.min.js?v=3.3.6"></script>
+	<script src="/js/pager.js"></script>
+    <script src="/js/jquery.jeditable.js"></script>
+
+	<!-- 自定义js -->
+	<script src="/js/content.js?v=1.0.0"></script>
+	<script src="/js/jquery.bridget.js"></script>
+	<script src="/js/jquery.mousewheel.min.js"></script>
+	<script src="/js/jquery.event.drag.js"></script>
+	
+	
+	<script src="/js/PreventGhostClick.js"></script>
+	
+	<script src="/js/mag.js"></script>
+	<script src="/js/mag-jquery.js"></script>
+	<script src="/js/mag-control.js"></script>
+	<script src="/js/index.js"></script>
+
+	<!-- Page-Level Scripts -->
+	<script>
+		(function ($) {
+	        $.getUrlParam = function (name) {
+	            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	            var r = window.location.search.substr(1).match(reg);
+	            if (r != null) return unescape(r[2]); return null;
+	        }
+	    })(jQuery);	
+	
+		var id = $.getUrlParam('id');
+		
+		$.post('/invoice/getInvoiceDetailByInvoiceId',{id:id},function(data){
+			if(!checkJsonIsEmpty(data)){
+				$('input').each(function(){
+					$(this).val(data[$(this).attr('id')]);
+				});
+				$('#filePath').attr('src', 'http://www.bangbangzhang.com/files/company/' + data.name);
+			}
+		});
+		
+		$('.btn-primary').on('click',function(){
+			if($("#invalid").prop("checked")){
+        		$.post('/invoice/updateInvoiceStatusByInvoiceId',{'id':id, 'status':'INVALID'}, function(data){
+        			if(data.status == 'ok'){
+        				window.location.reload();
+        			}
+        			else{
+        				alert("提交出错，请稍后再试！");
+        			}
+        		});
+        	} else {
+				var data = {};
+				$('input').each(function(){
+					data[$(this).attr('id')] = $(this).val();
+				});
+				var FA = "no";
+        		if($("#fa").prop("checked")){
+        			FA = "yes";
+        		}
+        		data.description = $('#type').val();
+				$.post('/invoice/updateInvoiceContentByInvoiceId',{"data": JSON.stringify(data), 'FA':FA, "id":id},function(data){
+					alert(data.error_msg);
+					window.location.reload();
+				});
+        	}
+		});
+		
+        function checkJsonIsEmpty(json) {
+        	var isEmpty = true;
+        	if (json == null) return true;
+        	for (var jsonKey in json) {
+        		isEmpty = false;
+        		break;
+        	}
+        	return isEmpty;
+        }
+        
+    </script>
+	<script type="text/javascript"
+		src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+	<!--统计代码，可删除-->
+</body>
+
+</html>

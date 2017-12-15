@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>H+ 后台主题UI框架 - 数据表格</title>
+<meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+<meta name="description"
+	content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+<link rel="shortcut icon" href="/favicon.ico">
+<link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+<link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+<!-- Data Tables -->
+<link href="/css/dataTables.bootstrap.css" rel="stylesheet">
+
+<link href="/css/animate.css" rel="stylesheet">
+<link href="/css/style.css?v=4.1.0" rel="stylesheet">
+<style type="text/css">
+#bg {
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	z-index: 1001;
+	-moz-opacity: 0.7;
+	opacity: .70;
+	filter: alpha(opacity = 70);
+}
+</style>
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>
+							基本 <small>分类，查找</small>
+						</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link"> <i class="fa fa-chevron-up"></i>
+							</a> <a class="dropdown-toggle" data-toggle="dropdown"
+								href="table_data_tables.html#"> <i class="fa fa-refresh"></i>
+							</a> <a class="close-link"> <i class="fa fa-times"></i>
+							</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+
+						<table class="table">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>公司名称</th>
+									<th>供应方名称</th>
+									<th>供应方税号</th>
+									<th>票据类型</th>
+									<th>金额</th>
+									<th>税额</th>
+									<th>人工识别</th>
+									<th>机器判定结果</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="tbody">
+
+							</tbody>
+						</table>
+						<div style="text-align: center">
+							<ul class="pagination" id="page">
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="bg" style="text-align: center; vertical-align: center;">
+		<div style="z-index: 1050; margin-top: 15%">
+			<img src="/images/loading.gif" style="width: 20px; height: 20px;">
+			<p style="color: white">正在刷新....</p>
+		</div>
+	</div>
+	<!-- 全局js -->
+	<script src="/js/jquery.min.js?v=2.1.4"></script>
+	<script src="/js/bootstrap.min.js?v=3.3.6"></script>
+
+	<!-- Data Tables -->
+	<script src="/js/jquery.dataTables.js"></script>
+	<script src="/js/dataTables.bootstrap.js"></script>
+
+	<!-- Page-Level Scripts -->
+	<script>
+		$(document).ready(
+		function() {
+			$('.table').DataTable({
+				serverSide: true,//分页，取数据等等的都放到服务端去
+	            processing: true,//载入数据的时候是否显示“载入中”
+	            pageLength: 10,  //首次加载的数据条数
+	            ordering: false, //排序操作在服务端进行，所以可以关了。
+	            pagingType: "full_numbers",
+	            autoWidth: false,
+	            stateSave: true,//保持翻页状态，和comTable.fnDraw(false);结合使用
+	            searching: false,//禁用datatables搜索
+	            ajax: {   
+	                type: "post",
+	                url: "/invoice/getAllInvoice",
+	                dataSrc: "data",
+					data: function (d) {
+					    var param = {};
+					    param.draw = d.draw;
+					    param.start = d.start;
+					    param.length = d.length;
+						return param;//自定义需要传递的参数。
+	                },
+	            },
+				columns : [
+					{
+						data : "invoice_id"
+					},
+					{
+						data : "company"
+					},
+					{
+						data : "supplier_name"
+					},
+					{
+						data : "identify_code"
+					},
+					{
+						data : "classification",
+						render : function(data,type,full,callback) {
+							if (data == 'common') {
+								return '定额发票';
+							} else if(data == 'added') {
+								return '增值税发票';
+							} else {
+								return '无法确定';
+							}
+						}
+					},
+					{
+						data : "amount"
+					},
+					{
+						data : "tax"
+					},
+					{
+						data : "status",
+						render : function(data,type,full,callback) {
+							if (data == 'RECOGNIZED') {
+								return '<span style="color:green">人工已识别</span>';
+							} else {
+								return '<span style="color:red">人工未识别</span>';
+							}
+						}
+					},
+					{
+						data : "forcast",
+						render : function(data,type,full,callback) {
+							if (data == 1) {
+								return '<span style="color:green">准确</span>';
+							} else {
+								return '<span style="color:red">不准确</span>';
+							}
+						}
+					},
+					{
+						data : null
+					}
+				],
+
+				columnDefs : [ {
+					targets : -1,//操作按钮目标列
+					defaultContent: '<button class="btn btn-info btn-sm edit">编辑发票</button>'
+				} ]
+			});
+		});
+
+		/* $('.fa-refresh').on('click', function() {
+			$('#bg').css('display', 'block');
+			$('#tbody').empty();
+			loadData(1);
+		}); */
+
+		$('.table').on('click', '.edit', function(){
+			var id = $(this).parents('tr').children('td').eq(0).html();
+			console.log(id);
+			/* window.location.href = 'editinvoice.html?id=' + id; */
+			openEditPageInNewTab(id);
+		});
+		
+		function openEditPageInNewTab(id){
+			var aEle = $('#editInvoice', parent.document).find('a');
+			var text = $(aEle[0]).html();
+			aEle[0].setAttribute('href', 'editinvoice.html?id='+id);
+			aEle[0].click();
+		}
+		
+		function checkJsonIsEmpty(json) {
+			var isEmpty = true;
+			if (json == null)
+				return true;
+			for ( var jsonKey in json) {
+				isEmpty = false;
+				break;
+			}
+			return isEmpty;
+		}
+	</script>
+	<script type="text/javascript"
+		src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+	<!--统计代码，可删除-->
+</body>
+
+</html>

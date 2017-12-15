@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<bean id="javaMail" class="com.wisdom.common.utils.JavaMail"
+        scope="prototype">
+        <constructor-arg value="${javamail.smtp.host}"></constructor-arg>
+    </bean>
+    
+    <bean id="javaMailService" class="com.wisdom.common.utils.JavaMailService">
+    	<property name="javaMail" ref="javaMail"></property>
+    	<constructor-arg value="${javamail.username}"></constructor-arg>
+    	<constructor-arg value="${javamail.password}"></constructor-arg>
+    </bean>
+    
+
+ 
+</beans>
