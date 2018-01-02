@@ -92,48 +92,7 @@
 	<context:component-scan base-package="com.wisdom.utils" />
 	<context:component-scan base-package="com.wisdom.common.queue" />
 	<!-- 事务管理 -->
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<!-- (this dependency is defined somewhere else) -->
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<bean id="srpConnectionFactory"
-		class="org.springframework.data.redis.connection.srp.SrpConnectionFactory"
-		p:host-name="139.196.40.99" p:port="6379" p:password="T4729VT95%XsIvM" />
-
-	<bean id="messageListener"
-		class="org.springframework.data.redis.listener.adapter.MessageListenerAdapter">
-		<constructor-arg>
-			<bean class="com.wisdom.common.queue.DefaultMessageDelegate" />
-		</constructor-arg>
-	</bean>
-
-	<bean id="messageListener2"
-		class="org.springframework.data.redis.listener.adapter.MessageListenerAdapter">
-		<constructor-arg>
-			<bean class="com.wisdom.common.queue.DeleteMessageDelegate" />
-		</constructor-arg>
-	</bean>
-
-	<bean id="redisContainer"
-		class="org.springframework.data.redis.listener.RedisMessageListenerContainer">
-		<property name="connectionFactory" ref="srpConnectionFactory" />
-		<property name="messageListeners">
-			<map>
-				<entry key-ref="messageListener">
-					<bean class="org.springframework.data.redis.listener.ChannelTopic">
-						<constructor-arg value="RAW_RECOGNIZED"></constructor-arg>
-					</bean>
-				</entry>
-				<entry key-ref="messageListener2">
-					<bean class="org.springframework.data.redis.listener.ChannelTopic">
-						<constructor-arg value="DELETE_INVOICE"></constructor-arg>
-					</bean>
-				</entry>
-			</map>
-		</property>
-	</bean>
+	
 	<tx:annotation-driven transaction-manager="txManager"></tx:annotation-driven>
 
 </beans>

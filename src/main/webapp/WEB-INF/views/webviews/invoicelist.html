@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-<title>H+ 后台主题UI框架 - 数据表格</title>
+<title>帮帮账发票识别系统</title>
 <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
 <meta name="description"
 	content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
@@ -63,11 +63,11 @@
 									<th>#</th>
 									<th>公司名称</th>
 									<th>供应方名称</th>
-									<th>供应方税号</th>
+									<!-- <th>供应方税号</th> -->
 									<th>票据类型</th>
 									<th>金额</th>
 									<th>税额</th>
-									<th>人工识别</th>
+									<!-- <th>人工识别</th> -->
 									<th>机器判定结果</th>
 									<th>操作</th>
 								</tr>
@@ -134,15 +134,15 @@
 					{
 						data : "supplier_name"
 					},
-					{
+					/* {
 						data : "identify_code"
-					},
+					}, */
 					{
 						data : "classification",
 						render : function(data,type,full,callback) {
 							if (data == 'common') {
 								return '定额发票';
-							} else if(data == 'added') {
+							} else if(data == 'AddedValueTaxOne') {
 								return '增值税发票';
 							} else {
 								return '无法确定';
@@ -155,7 +155,7 @@
 					{
 						data : "tax"
 					},
-					{
+					/* {
 						data : "status",
 						render : function(data,type,full,callback) {
 							if (data == 'RECOGNIZED') {
@@ -164,12 +164,16 @@
 								return '<span style="color:red">人工未识别</span>';
 							}
 						}
-					},
+					}, */
 					{
 						data : "forcast",
 						render : function(data,type,full,callback) {
-							if (data == 1) {
-								return '<span style="color:green">准确</span>';
+							if (data == 'ALL_SUCCESS') {
+								return '<span style="color:green">全部准确</span>';
+							} else if(data == 'NUMBER_SUCCESS'){
+								return '<span style="color:blue">金额准确</span>';
+							} else if(data == 'NAME_SUCCESS'){
+								return '<span style="color:yellow">名称准确</span>';
 							} else {
 								return '<span style="color:red">不准确</span>';
 							}

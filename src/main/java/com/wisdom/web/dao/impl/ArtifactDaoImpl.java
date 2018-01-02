@@ -20,28 +20,27 @@ public class ArtifactDaoImpl implements IArtifactDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	@Override
-	public boolean addArtifact(int invoice_id, String supplier, String identify_code, String classification, 
-			String type, double tax, double amount, int number, int isFa, int isAccurate, int forecast) {
-		
-		String sql = "insert into artifact (invoice_id, supplier_name, identify_code, classification, amount, tax, "
-				+ "number, type, is_fa, is_accurate, forcast, created_time) values (?,?,?,?,?,?,?,?,?,?,?,?)";
+	public boolean addArtifact(int invoiceId, String classification, String supplier, String identifyCode, Double sum,
+			int rate, Double amount, Double tax, int number, String type, String forcast, int isFa, int isAccurate) {
+		String sql = "insert into artifact (invoice_id, classification, supplier_name, identify_code, sum, rate, amount, tax, "
+				+ "number, type, forcast, is_fa, is_accurate, created_time) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		int affectedRows = 0;
 		try {
-			affectedRows = jdbcTemplate.update(sql, invoice_id, supplier, identify_code, classification, 
-					amount, tax, number, type, isFa, isAccurate, forecast, new Timestamp(System.currentTimeMillis()));
+			affectedRows = jdbcTemplate.update(sql, invoiceId, classification, supplier, identifyCode, sum, rate, 
+					amount, tax, number, type, forcast, isFa, isAccurate, new Timestamp(System.currentTimeMillis()));
 		} catch(Exception e) {
 			logger.error("addArtifact error : {}", e.toString());
 		}
 		return affectedRows!=0;
 	}
-
+	
 	@Override
-	public boolean updateArtifactById(String artifactId, String supplier_name, String identify_code, String classification,
-			String type,  Double amount, Double tax, int is_fa) {
-		String sql = "update artifact set supplier_name=?, identify_code=?, classification=?, amount=?, tax=?, type=?, is_fa=?, is_accurate=? where id=?";
+	public boolean updateArtifactById(String artifactId, String classification, String supplier_name, String identify_code,
+			Double sum, int rate, Double amount, Double tax, String type, int is_fa, int is_accurate) {
+		String sql = "update artifact set classification=?, supplier_name=?, identify_code=?, sum=?, rate=?, amount=?, tax=?, type=?, is_fa=?, is_accurate=? where id=?";
 		int affectedRows = 0;
 		try {
-			affectedRows = jdbcTemplate.update(sql, supplier_name, identify_code, classification, amount, tax, type, is_fa, 1, new Timestamp(System.currentTimeMillis()));
+			affectedRows = jdbcTemplate.update(sql, classification, supplier_name, identify_code, sum, rate, amount, tax, type, is_fa, is_accurate, artifactId);
 		} catch(Exception e) {
 			logger.error("addArtifact error : {}", e.toString());
 		}

@@ -1,6 +1,7 @@
 package com.wisdom.common.queue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wisdom.utils.VerifyNameCodeUtils;
 import com.wisdom.web.dao.IArtifactDao;
 import com.wisdom.web.dao.IInvoiceDao;
+
+import net.sf.json.JSONArray;
+import redis.clients.jedis.Jedis;
 
 
 @Service
@@ -55,68 +59,84 @@ public class DefaultMessageDelegate implements MessageDelegate {
 		long companyId = Long.parseLong((String) data.get("company_id"));
 		
 		String classification = (String) data.get("classification");
-		
-		List<HashMap<String, Object>> content = mapper.readValue(data.get("content").toString(), typeRef);
-		if (content != null && content.size() != 0) {
-			for (HashMap<String, Object> item : content) {
-				if(item.isEmpty()) continue;
-				String supplier = (String) item.get("supplierName");
-				String identifyCode = (String) item.get("identifyCode");
-				String type = (String) item.get("description");
-				Double amount = 0.0;
-				Double tax = 0.0;
-				int number = 1;
-				int isAccurate = 0;
-				int isFa = 0;
-				int forecast = 0;
-				
-				Map<String, String> companyInfoMap = VerifyNameCodeUtils.getCompanyInfo(identifyCode);
-				if(companyInfoMap!=null && !companyInfoMap.isEmpty()) {
-					String companyName = companyInfoMap.get("Name");
-					String creditCode = companyInfoMap.get("CreditCode");
-					if(identifyCode.equals(creditCode)) {
-						forecast = 1;
-						supplier = companyName;
-					}
+		try {
+			String contentStr = data.get("content").toString();
+			TypeReference<HashMap<String, Object>> mapRef = new TypeReference<HashMap<String, Object>>() {
+			};
+			Map<String, Object> contentMap = mapper.readValue(contentStr, mapRef);
+			
+			publishDetail(String.valueOf(invoiceId), contentMap);
+			
+			String supplier = (String) contentMap.get("supplierName");
+			//String buyerName = (String) item.get("buyerName");
+			String type = (String) contentMap.get("description");
+			String identifyCode = (String) contentMap.get("identifyCode");
+			String forcast = (String) contentMap.get("result_status");
+			Double sum = 0.0;
+			Double amount = 0.0;
+			Double tax = 0.0;
+			int number = 1;
+			int rate = 0;
+			int isFa = 0;
+			int isAccurate = 0;
+			
+			try{
+				String sum_str = (String) contentMap.get("sum");
+				if(sum_str != null && !sum_str.isEmpty() ) {
+					sum = Double.parseDouble(sum_str);
 				}
-				if(forecast != 1){
-					companyInfoMap = VerifyNameCodeUtils.getCompanyInfo(supplier);
-					if(companyInfoMap!=null && !companyInfoMap.isEmpty()) {
-						String companyName = companyInfoMap.get("Name");
-						String creditCode = companyInfoMap.get("CreditCode");
-						if(companyName.equals(supplier)) {
-							forecast = 1;
-							identifyCode = creditCode;
-						}
-					}
+				String rate_str = (String) contentMap.get("rate");
+				if(rate_str != null && !rate_str.isEmpty() ) {
+					rate = Integer.parseInt(rate_str);
 				}
-				try{
-					String amount_str = (String) item.get("amount");
-					if(amount_str != null && !amount_str.isEmpty() ) {
-						amount = Double.parseDouble(amount_str);
-					}
-					String tax_str = (String) item.get("tax");
-					if(tax_str != null && !tax_str.isEmpty() ) {
-						tax = Double.parseDouble(tax_str);
-					}
-					String number_str = (String) item.get("number");
-					if(number_str != null && !number_str.isEmpty() ) {
-						number = Integer.parseInt(number_str);
-					}
-				
-					boolean isAccurate_str = (boolean)item.get("isAccurate");
-					if(isAccurate_str) {
-						isAccurate = 1;
-					}
-				}catch(Exception e) {
-					logger.error("handleMessage parse error : {}", e.toString());
+				String amount_str = (String) contentMap.get("amount");
+				if(amount_str != null && !amount_str.isEmpty() ) {
+					amount = Double.parseDouble(amount_str);
 				}
-				artifactDao.addArtifact(invoiceId, supplier, identifyCode, classification, type, tax, amount, number, isFa, isAccurate, forecast);
+				String tax_str = (String) contentMap.get("tax");
+				if(tax_str != null && !tax_str.isEmpty() ) {
+					tax = Double.parseDouble(tax_str);
+				}
+				String number_str = (String) contentMap.get("number");
+				if(number_str != null && !number_str.isEmpty() ) {
+					number = Integer.parseInt(number_str);
+				}
+			}catch(Exception e) {
+				logger.error("handleMessage parse error : {}", e.toString());
 			}
-		} else {
-			artifactDao.addArtifact(invoiceId, "", "", "", "", 0.0, 0.0, 1, 0, 0, 0);
+			artifactDao.addArtifact(invoiceId, classification, supplier, identifyCode, sum, rate, amount, tax, number, type, forcast, isFa, isAccurate);
+		}catch(Exception e) {
+			logger.error("handleMessage error :{}", e.toString());
+			artifactDao.addArtifact(invoiceId, "", "", "", 0.0, 0, 0.0, 0.0, 1, "", "ALL_FAIL", 0, 0);
 		}
 		invoiceDao.addInvoice(priority, name, path, company, invoiceId, companyId);
 	}
 
+	
+	public long publishDetail(String invoice_id, Map<String, Object> contentMap) {
+		
+		List<Map<String, Object>> exportedDataList = new ArrayList<>();
+		
+		Map<String, Object> exportedData = new HashMap<>();
+		exportedData.put("fa", "no");
+		exportedData.put("id", invoice_id);
+		List<Map<String, Object>> contentList = new ArrayList<>();
+		contentMap.put("description", contentMap.get("type"));
+		contentMap.put("number", "1");
+		contentList.add(contentMap);
+		exportedData.put("data", contentList);
+		
+		exportedDataList.add(exportedData);
+		
+		String exportDataStr = JSONArray.fromObject(exportedData).toString();
+		System.out.println(exportDataStr);
+		Jedis jedis = new Jedis("139.196.40.99", 6379);
+		jedis.auth("T4729VT95%XsIvM");
+		logger.debug("begin publish recognizedInvoive");
+		long k_ = jedis.publish("RECOGNIZE_COMPLETE", exportDataStr);
+		logger.debug("end publish recognized invoive, publish return value : {}", k_);
+		jedis.close();
+		return k_;
+	}
+	
 }

@@ -93,8 +93,8 @@ public class InvoiceDaoImpl implements IInvoiceDao {
 	@Override
 	public Map<String, Object> getInvoiceDetailByInvoiceId(int invoice_id) {
 		Map<String, Object> retMap = null;
-		String sql = "select name, company, supplier_name, identify_code, classification, amount, tax, type from invoice left "
-				+ "join (select invoice_id, supplier_name, identify_code, classification, sum(amount) as amount, "
+		String sql = "select name, company, supplier_name, identify_code, classification, amount, tax, sum, rate, type from invoice left "
+				+ "join (select invoice_id, supplier_name, identify_code, classification, sum(amount) as amount, sum, rate, "
 				+ "sum(tax) as tax, group_concat(type) as type from artifact group by "
 				+ "artifact.invoice_id) tmp on invoice.invoice_id=tmp.invoice_id where invoice.invoice_id=" + invoice_id;
 		try {

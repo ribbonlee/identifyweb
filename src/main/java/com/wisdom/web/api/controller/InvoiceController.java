@@ -1,5 +1,6 @@
 package com.wisdom.web.api.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,22 +86,24 @@ public class InvoiceController {
 		//update invoice
 		Map<String, String> dataMap = (Map<String, String>)JSON.parse(data);
 		try {
+			String classification = dataMap.get("classification");
 			String supplier_name = dataMap.get("supplier_name");
 			String identify_code = dataMap.get("identify_code");
-			String classification = dataMap.get("classification");
-			String type = dataMap.get("type");
+			Double sum = Double.parseDouble(dataMap.get("sum"));
+			int rate = Integer.parseInt(dataMap.get("rate").substring(0, dataMap.get("rate").indexOf("%")));
 			Double amount = Double.parseDouble(dataMap.get("amount"));
 			Double tax = Double.parseDouble(dataMap.get("tax"));
+			String type = dataMap.get("type");
 			int is_fa = 0;
 			if (FA.equals("yes")) {
 				is_fa = 1;
 			}
 			Map<String, Object> artifactMap = artifactDao.getArtifactByInvoiceId(invoice_id);
 			if(artifactMap!=null && !artifactMap.isEmpty()) {
-				String artifactId = (String)artifactMap.get("id");
-				artifactDao.updateArtifactById(artifactId, supplier_name, identify_code, classification, type, amount, tax, is_fa);
+				String artifactId = String.valueOf(artifactMap.get("id"));
+				artifactDao.updateArtifactById(artifactId, classification, supplier_name, identify_code, sum, rate, amount, tax, type, is_fa, 1);
 			} else {
-				artifactDao.addArtifact(Integer.valueOf(invoice_id), supplier_name, identify_code, classification, type, tax, amount, 1, is_fa, 1, 0);
+				artifactDao.addArtifact(Integer.valueOf(invoice_id), classification, supplier_name, identify_code, sum, rate, amount, tax, 1, type, "ALL_FAIL", is_fa, 1);
 			}
 			invoiceDao.updateInvoiceStatusByInvoiceId(invoice_id, "RECOGNIZED");
 		} catch (Exception e) {
@@ -110,10 +113,19 @@ public class InvoiceController {
 			return retMap;
 		} 
 		
-		Map<String, String> exportedData = new HashMap<>();
+		List<Map<String, Object>> exportedDataList = new ArrayList<>();
+		
+		Map<String, Object> exportedData = new HashMap<>();
 		exportedData.put("fa", FA);
 		exportedData.put("id", invoice_id);
-		exportedData.put("data", data);
+		List<Map<String, String>> contentList = new ArrayList<>();
+		dataMap.put("description", dataMap.get("type"));
+		dataMap.put("number", "1");
+		contentList.add(dataMap);
+		exportedData.put("data", contentList);
+		
+		exportedDataList.add(exportedData);
+		
 		String exportDataStr = JSONArray.fromObject(exportedData).toString();
 		System.out.println(exportDataStr);
 		Jedis jedis = new Jedis("139.196.40.99", 6379);
