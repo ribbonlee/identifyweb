@@ -121,10 +121,12 @@ public class DefaultMessageDelegate implements MessageDelegate {
 		exportedData.put("fa", "no");
 		exportedData.put("id", invoice_id);
 		List<Map<String, Object>> contentList = new ArrayList<>();
-		contentMap.put("description", contentMap.get("type"));
+		contentMap.put("description", contentMap.get("description"));
+		contentMap.put("supplier", contentMap.get("supplierName"));
 		contentMap.put("number", "1");
 		contentList.add(contentMap);
-		exportedData.put("data", contentList);
+		String contentListStr = JSONArray.fromObject(contentList).toString();
+		exportedData.put("data", contentListStr);
 		
 		exportedDataList.add(exportedData);
 		
