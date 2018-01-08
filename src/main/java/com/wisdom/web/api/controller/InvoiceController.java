@@ -89,6 +89,7 @@ public class InvoiceController {
 			String classification = dataMap.get("classification");
 			String supplier_name = dataMap.get("supplier_name");
 			String identify_code = dataMap.get("identify_code");
+			String invoice_type = dataMap.get("identify_code");
 			Double sum = Double.parseDouble(dataMap.get("sum"));
 			int rate = Integer.parseInt(dataMap.get("rate").substring(0, dataMap.get("rate").indexOf("%")));
 			Double amount = Double.parseDouble(dataMap.get("amount"));
@@ -101,9 +102,9 @@ public class InvoiceController {
 			Map<String, Object> artifactMap = artifactDao.getArtifactByInvoiceId(invoice_id);
 			if(artifactMap!=null && !artifactMap.isEmpty()) {
 				String artifactId = String.valueOf(artifactMap.get("id"));
-				artifactDao.updateArtifactById(artifactId, classification, supplier_name, identify_code, sum, rate, amount, tax, type, is_fa, 1);
+				artifactDao.updateArtifactById(artifactId, classification, supplier_name, identify_code, sum, rate, amount, tax, type, is_fa, 1, invoice_type);
 			} else {
-				artifactDao.addArtifact(Integer.valueOf(invoice_id), classification, supplier_name, identify_code, sum, rate, amount, tax, 1, type, "ALL_FAIL", is_fa, 1);
+				artifactDao.addArtifact(Integer.valueOf(invoice_id), classification, supplier_name, identify_code, sum, rate, amount, tax, 1, type, "ALL_FAIL", is_fa, 1, invoice_type);
 			}
 			invoiceDao.updateInvoiceStatusByInvoiceId(invoice_id, "RECOGNIZED");
 		} catch (Exception e) {

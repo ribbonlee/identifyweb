@@ -64,7 +64,7 @@
 									<th>公司名称</th>
 									<th>供应方名称</th>
 									<!-- <th>供应方税号</th> -->
-									<th>票据类型</th>
+									<th>发票类型</th>
 									<th>金额</th>
 									<th>税额</th>
 									<!-- <th>人工识别</th> -->
@@ -138,14 +138,12 @@
 						data : "identify_code"
 					}, */
 					{
-						data : "classification",
+						data : "invoice_type",
 						render : function(data,type,full,callback) {
-							if (data == 'common') {
-								return '定额发票';
-							} else if(data == 'AddedValueTaxOne') {
-								return '增值税发票';
+							if (data==null || data== '') {
+								return 'unknown';
 							} else {
-								return '无法确定';
+								return data;
 							}
 						}
 					},

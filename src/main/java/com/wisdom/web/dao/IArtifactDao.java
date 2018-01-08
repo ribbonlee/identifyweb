@@ -5,11 +5,11 @@ import java.util.Map;
 public interface IArtifactDao {
 
 	public boolean updateArtifactById(String artifactId, String classification, String supplier_name, String identify_code, 
-			Double sum, int rate, Double amount, Double tax, String type, int is_fa, int is_accurate);
+			Double sum, int rate, Double amount, Double tax, String type, int is_fa, int is_accurate, String invoice_type);
 
 	public Map<String, Object> getArtifactByInvoiceId(String invoice_id);
 
 	public boolean addArtifact(int invoiceId, String classification, String supplier, String identifyCode, Double sum,
-			int rate, Double amount, Double tax, int number, String type, String forcast, int isFa, int isAccurate);
+			int rate, Double amount, Double tax, int number, String type, String forcast, int isFa, int isAccurate, String invoice_type);
 
 }

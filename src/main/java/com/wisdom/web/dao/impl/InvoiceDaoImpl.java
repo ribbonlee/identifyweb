@@ -78,7 +78,7 @@ public class InvoiceDaoImpl implements IInvoiceDao {
 	public List<Map<String, Object>> getInvoice(String start, String length) {
 		String sql = "select invoice.invoice_id, invoice.status, company, supplier_name, "
 				+ "sum(amount) AS amount, sum(tax) AS tax, group_concat(type) AS type, "
-				+ "artifact.forcast, artifact.identify_code, artifact.classification "
+				+ "artifact.forcast, artifact.identify_code, artifact.invoice_type "
 				+ "from invoice left join artifact on invoice.invoice_id = artifact.invoice_id "
 				+ "group by artifact.invoice_id order by invoice.created_time desc limit " + start + "," + length;
 		List<Map<String, Object>> retList = null;

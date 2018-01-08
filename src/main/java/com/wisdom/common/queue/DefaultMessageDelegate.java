@@ -72,6 +72,7 @@ public class DefaultMessageDelegate implements MessageDelegate {
 			String type = (String) contentMap.get("description");
 			String identifyCode = (String) contentMap.get("identifyCode");
 			String forcast = (String) contentMap.get("result_status");
+			String invoice_type = (String) contentMap.get("invoice_type");
 			Double sum = 0.0;
 			Double amount = 0.0;
 			Double tax = 0.0;
@@ -104,10 +105,10 @@ public class DefaultMessageDelegate implements MessageDelegate {
 			}catch(Exception e) {
 				logger.error("handleMessage parse error : {}", e.toString());
 			}
-			artifactDao.addArtifact(invoiceId, classification, supplier, identifyCode, sum, rate, amount, tax, number, type, forcast, isFa, isAccurate);
+			artifactDao.addArtifact(invoiceId, classification, supplier, identifyCode, sum, rate, amount, tax, number, type, forcast, isFa, isAccurate, invoice_type);
 		}catch(Exception e) {
 			logger.error("handleMessage error :{}", e.toString());
-			artifactDao.addArtifact(invoiceId, "", "", "", 0.0, 0, 0.0, 0.0, 1, "", "ALL_FAIL", 0, 0);
+			artifactDao.addArtifact(invoiceId, "", "", "", 0.0, 0, 0.0, 0.0, 1, "", "ALL_FAIL", 0, 0, "unknown");
 		}
 		invoiceDao.addInvoice(priority, name, path, company, invoiceId, companyId);
 	}
